@@ -24,6 +24,10 @@ Route::get('/projects', [ProjectController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('projects');
 
+Route::get('/projects/create', [ProjectController::class, 'create'])
+    ->middleware(['auth', 'verified'])
+    ->name('projects.create');
+
 Route::get('/media', [MediaController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('media');

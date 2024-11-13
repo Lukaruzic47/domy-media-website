@@ -39,6 +39,7 @@ const pages = computed(() => {
                     <div class="px-8 py-5 text-2xl font-bold text-gray-900 dark:text-gray-100">
                         All projects
                         <Link
+                            :href="route('projects.create')"
                             class="shadow-lg hover:text-white text-base float-right font-normal bg-primary-darker-blue px-4 py-2 rounded-md hover:bg-secondary-darker-blue">
                             Create new project
                         </Link>
