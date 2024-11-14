@@ -69,7 +69,6 @@ const pages = computed(() => {
                                     class="px-3 py-1 rounded-md"
                                     :disabled="!link.url"
                                 >
-
                                 </button>
                             </div>
                         </div>
