@@ -20,6 +20,10 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+    /**
+     * Project routes
+     */
+
 Route::get('/projects', [ProjectController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('projects');
@@ -27,6 +31,18 @@ Route::get('/projects', [ProjectController::class, 'index'])
 Route::get('/projects/create', [ProjectController::class, 'create'])
     ->middleware(['auth', 'verified'])
     ->name('projects.create');
+
+Route::post('/projects', [ProjectController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('projects.store');
+
+Route::get('/projects/{slug}/edit', [ProjectController::class, 'edit'])
+    ->middleware(['auth', 'verified'])
+    ->name('projects.edit');
+
+/**
+ * Media routes.
+ */
 
 Route::get('/media', [MediaController::class, 'index'])
     ->middleware(['auth', 'verified'])

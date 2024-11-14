@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -33,19 +34,18 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        $project = Project::create($request->only([
-            'title', 'author', 'description', 'date', 'published', 'metadata', 'category', 'slug', 'youtubeURL'
-        ]));
+        $validated = $request->validate([
+            'title' => 'required|string|max:255|unique:projects,title',
+            'author' => 'required|string|max:255',
+            'date' => 'required|date',
+            'category' => 'required|string|max:255',
+        ]);
 
-        if ($request->hasFile('image')) {
-            $project->addMedia($request->file('image'))->toMediaCollection('images');
-        }
+        $slug = Str::slug($validated['title']);
+        $validated['slug'] = $slug;
+        $project = Project::create($validated);
 
-        if ($request->hasFile('video')) {
-            $project->addMedia($request->file('video'))->toMediaCollection('videos');
-        }
-
-        return redirect()->route('projects.index')->with('success', 'Project created successfully.');
+        return redirect()->route('projects.edit', $project->slug);
     }
 
     /**
@@ -59,10 +59,15 @@ class ProjectController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Project $project)
+    public function edit($slug)
     {
-        return view('projects.edit', compact('project'));
+        $project = Project::where('slug', $slug)->firstOrFail();
+
+        return Inertia::render('Projects/Edit', [
+            'project' => $project,
+        ]);
     }
+
 
     /**
      * Update the specified resource in storage.

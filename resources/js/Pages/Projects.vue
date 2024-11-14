@@ -51,6 +51,7 @@ const pages = computed(() => {
                             v-for="project in projects.data"
                             :key="project.id"
                             :title="project.title"
+                            :slug="project.slug"
                         />
                     </div>
                     <!-- Pagination -->

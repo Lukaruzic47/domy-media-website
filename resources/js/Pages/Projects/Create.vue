@@ -2,19 +2,19 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {Head} from "@inertiajs/vue3";
 import {ref} from "vue";
+import {Inertia} from "@inertiajs/inertia";
 
-const step = ref(1);
 const isCurrentDateChecked = ref(false);
 const project = ref({
-    name: "",
+    title: "",
     author: "",
     date: "",
     category: "",
 });
 
-const nextStep = () => {
-    step.value++;
-};
+defineProps({
+    errors: Object,
+});
 
 const useCurrentDate = () => {
     if (isCurrentDateChecked.value) {
@@ -22,59 +22,82 @@ const useCurrentDate = () => {
     }
 };
 
+const createProject = () => {
+    useCurrentDate();
+    Inertia.post('/projects', project.value);
+};
+
 </script>
 
 <template>
     <Head title="Create project"/>
-    <!-- Step 1: Basic Information -->
-    <div v-if="step === 1" class="absolute w-full h-lvh bg-transparent-dark-blue flex justify-center items-center">
-        <div
-            class="text-white text-2xl font-bold text-center w-1/3 h-auto rounded-2xl px-8 py-6 bg-primary-darker-blue shadow-lg">
-            <h4 class="float-left block">Create a new project</h4><br/>
-            <form @submit.prevent="nextStep" class="flex flex-col my-2 text-gray-800 placeholder-gray-400">
-                <input class="rounded-md bg-gray-300 my-2" type="text" v-model="project.name" placeholder="Project Name"
-                       required/>
-                <input class="rounded-md bg-gray-300 my-2" type="text" v-model="project.author" placeholder="Author"
-                       required/>
-                <input class="rounded-md bg-gray-300 my-2" type="date"
-                       v-model="project.date"
-                       :disabled="isCurrentDateChecked"
-                       required/>
-                <div class="flex items-center">
-                    <input
-                        type="checkbox"
-                        class="p-2 inline-block cursor-pointer rounded bg-primary-dark-blue"
-                        v-model="isCurrentDateChecked"
-                        @change="useCurrentDate"
-                    />
-                    <label class="inline-block text-base ml-2 text-gray-500">Use current date</label>
-                </div>
-                <select class="rounded-md bg-gray-300 my-2 cursor-pointer ">
-                    <option class="font-medium" value="Music video">Music video</option>
-                    <option class="font-medium" value="Commercial">Commercial</option>
-                    <option class="font-medium" value="Event">Event</option>
-                    <option class="font-medium" value="Behind the scenes">Behind the scenes</option>
-                </select>
-                <button
-                    class="shadow-lg text-gray-300 text-base mt-2 ml-auto w-fit font-normal px-4 py-2 rounded-md bg-secondary-darker-blue hover:bg-primary-dark-blue hover:text-white"
-                    type="submit">Next
-                </button>
-            </form>
-        </div>
-    </div>
-
     <AuthenticatedLayout>
-        <div>
-            <!-- Step 2: Upload Images -->
-            <div v-if="step === 2">
-                <form @submit.prevent="submitProject">
-                    <!-- Add fields for image upload here -->
-                    <input type="file" @change="handleImageUpload" multiple/>
-                    <button type="submit">Submit Project</button>
+
+        <!-- Step 1: Basic Information -->
+        <div class="absolute w-full h-lvh bg-transparent-dark-blue flex justify-center items-center">
+            <div
+                class="text-white text-2xl font-bold text-center w-1/3 h-auto rounded-2xl px-8 py-6 bg-primary-darker-blue shadow-lg">
+                <h4 class="float-left block">Create a new project</h4><br/>
+                <form
+                    class="flex flex-col my-2 text-gray-800 placeholder-gray-400"
+                    @submit.prevent="createProject"
+                >
+                    <input
+                        class="rounded-md bg-gray-300 my-2"
+                        type="text" v-model="project.title"
+                        placeholder="Project Name"
+                        required
+                    />
+                    <span v-if="errors.title" class="text-red-500 text-sm font-normal mr-auto">{{ errors.title }}</span>
+
+                    <input
+                        class="rounded-md bg-gray-300 my-2"
+                        type="text"
+                        v-model="project.author"
+                        placeholder="Author"
+                        required
+                    />
+                    <span v-if="errors.author" class="text-red-500 text-sm font-normal mr-auto">{{ errors.author }}</span>
+
+                    <input
+                        class="rounded-md bg-gray-300 my-2"
+                        type="date"
+                        v-model="project.date"
+                        :disabled="isCurrentDateChecked"
+                        required
+                    />
+                    <span v-if="errors.date" class="text-red-500 text-sm font-normal mr-auto">{{ errors.date }}</span>
+
+                    <div class="flex items-center">
+                        <input
+                            type="checkbox"
+                            class="p-2 inline-block cursor-pointer rounded bg-primary-dark-blue"
+                            v-model="isCurrentDateChecked"
+                            @change="useCurrentDate"
+                        />
+                        <label class="inline-block text-base ml-2 text-gray-500">Use current date</label>
+                    </div>
+                    <select
+                        class="rounded-md bg-gray-300 my-2 cursor-pointer"
+                        v-model="project.category"
+                    >
+                        <option class="font-medium" value="Music video">Music video</option>
+                        <option class="font-medium" value="Commercial">Commercial</option>
+                        <option class="font-medium" value="Event">Event</option>
+                        <option class="font-medium" value="Behind the scenes">Behind the scenes</option>
+                    </select>
+                    <span v-if="errors.category" class="text-red-500 text-sm font-normal mr-auto">{{
+                            errors.category
+                        }}</span>
+
+                    <button
+                        class="shadow-lg text-gray-300 text-base mt-2 ml-auto w-fit font-normal px-4 py-2 rounded-md bg-secondary-darker-blue hover:bg-primary-dark-blue hover:text-white"
+                        type="submit">Next
+                    </button>
                 </form>
             </div>
-
         </div>
+
     </AuthenticatedLayout>
 </template>
 
