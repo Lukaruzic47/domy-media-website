@@ -43,9 +43,9 @@ class ProjectController extends Controller
 
         $slug = Str::slug($validated['title']);
         $validated['slug'] = $slug;
-        $project = Project::create($validated);
+        Project::create($validated);
 
-        return redirect()->route('projects.edit', $project->slug);
+        return redirect()->route('projects.edit', ['slug' => $slug]);
     }
 
     /**

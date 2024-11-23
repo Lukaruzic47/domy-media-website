@@ -1,31 +1,30 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {Head} from "@inertiajs/vue3";
+import {reactive} from "vue";
 import {ref} from "vue";
 import {Inertia} from "@inertiajs/inertia";
+// import Link from "@inertiajs/vue3";
 
 const isCurrentDateChecked = ref(false);
-const project = ref({
+const project = reactive({
     title: "",
     author: "",
     date: "",
     category: "",
 });
-
-defineProps({
-    errors: Object,
-});
+const errors = reactive({});
 
 const useCurrentDate = () => {
     if (isCurrentDateChecked.value) {
-        project.value.date = new Date().toISOString().split('T')[0];
+        project.date = new Date().toISOString().split('T')[0];
     }
 };
 
-const createProject = () => {
+function submit() {
     useCurrentDate();
-    Inertia.post('/projects', project.value);
-};
+    Inertia.post('/projects', project)
+}
 
 </script>
 
@@ -40,7 +39,7 @@ const createProject = () => {
                 <h4 class="float-left block">Create a new project</h4><br/>
                 <form
                     class="flex flex-col my-2 text-gray-800 placeholder-gray-400"
-                    @submit.prevent="createProject"
+                    @submit.prevent="submit"
                 >
                     <input
                         class="rounded-md bg-gray-300 my-2"
