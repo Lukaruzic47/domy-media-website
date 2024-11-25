@@ -1,5 +1,6 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import EditLayout from '@/Layouts/EditLayout.vue';
+import EditProjectTitle from "@/Components/EditProjectTitle.vue";
 import {Head} from "@inertiajs/vue3";
 // import {reactive} from "vue";
 // import {ref} from "vue";
@@ -22,7 +23,12 @@ function submit() {
 
 <template>
     <Head title="Create project"/>
-    <AuthenticatedLayout>
+    <EditLayout
+        :project-title="project.title"
+    >
+        <EditProjectTitle
+            :project-name="project.title"
+        />
 
         <!-- Step 1: Basic Information -->
         <div class="absolute w-full h-lvh bg-transparent-dark-blue flex justify-center items-center">
@@ -32,5 +38,5 @@ function submit() {
             </div>
         </div>
 
-    </AuthenticatedLayout>
+    </EditLayout>
 </template>

@@ -34,9 +34,9 @@ const pages = computed(() => {
         </template>
 
         <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-screen-2xl sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-                    <div class="px-8 py-5 text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <div class="px-8 py-4 text-2xl font-bold text-gray-900 dark:text-gray-100">
                         All projects
                         <Link
                             :href="route('projects.create')"
@@ -44,14 +44,17 @@ const pages = computed(() => {
                             Create new project
                         </Link>
                     </div>
-                    <hr class="w-[calc(100%-24px*2)] mx-8"/>
-
-                    <div class="mx-8 my-4 grid grid-cols-2 grid-rows-6">
+                    <div class="mx-8 my-2 grid grid-cols-2 grid-rows-6 gap-3">
                         <ProjectCard
                             v-for="project in projects.data"
                             :key="project.id"
                             :title="project.title"
                             :slug="project.slug"
+                            :image="project.thumbnail"
+                            :published="project.published"
+                            :views="project.views"
+                            :category="project.category"
+                            :date="project.date"
                         />
                     </div>
                     <!-- Pagination -->
