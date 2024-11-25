@@ -2,10 +2,8 @@
 import EditLayout from '@/Layouts/EditLayout.vue';
 import EditProjectTitle from "@/Components/EditProjectTitle.vue";
 import {Head} from "@inertiajs/vue3";
-// import {reactive} from "vue";
-// import {ref} from "vue";
-
-import { defineProps } from 'vue';
+import {ref} from "vue";
+import {defineProps, reactive, watch} from 'vue';
 import {Inertia} from "@inertiajs/inertia";
 
 const props = defineProps({
@@ -14,10 +12,16 @@ const props = defineProps({
         required: true,
     },
 });
-function submit() {
-    useCurrentDate();
-    Inertia.post('/projects', project)
-}
+
+const projectTitle = ref(props.project.title);
+
+watch(projectTitle, (newValue, oldValue) => {
+    console.log(newValue, oldValue);
+});
+
+const project = reactive({
+    ...props.project,
+});
 
 </script>
 
@@ -27,7 +31,7 @@ function submit() {
         :project-title="project.title"
     >
         <EditProjectTitle
-            :project-name="project.title"
+            v-model="projectTitle"
         />
 
         <!-- Step 1: Basic Information -->

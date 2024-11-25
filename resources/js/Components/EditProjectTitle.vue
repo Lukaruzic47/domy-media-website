@@ -1,23 +1,28 @@
 <script setup>
-import { ref, watch, defineProps, nextTick } from 'vue';
+import { ref, watch, defineProps, nextTick, defineEmits } from "vue";
 
 const props = defineProps({
-    projectName: {
+    modelValue: {
         type: String,
         required: true,
     },
 });
 
+const emit = defineEmits(["update:modelValue"]);
+
 // Reference i reaktivni podaci
 const inputRef = ref(null);
 const isEditing = ref(false);
-const editedProjectName = ref(props.projectName);
-const savedProjectName = ref(props.projectName); // Praćenje zadnje spremljene vrijednosti
+const editedProjectName = ref(props.modelValue);
+const savedProjectName = ref(props.modelValue); // Praćenje zadnje spremljene vrijednosti
 
 // Pratimo promjene props vrijednosti
-watch(() => props.projectName, (value) => {
-    editedProjectName.value = value;
-    savedProjectName.value = value; // Ažuriranje spremljene vrijednosti kada roditelj promijeni prop
+watch(() => props.modelValue, (value) => {
+    // Ažuriraj samo ako je došlo do promjene
+    if (savedProjectName.value !== value) {
+        editedProjectName.value = value;
+        savedProjectName.value = value;
+    }
 });
 
 // Funkcija za početak uređivanja
@@ -32,10 +37,11 @@ function editTitle() {
 
 // Funkcija za spremanje promjene naslova
 function saveTitle() {
-    if (editedProjectName.value.trim() === '') {
+    if (editedProjectName.value.trim() === "") {
         editedProjectName.value = savedProjectName.value; // Reset ako je prazno
-    } else {
+    } else if (editedProjectName.value !== savedProjectName.value) {
         savedProjectName.value = editedProjectName.value; // Ažuriraj spremljenu vrijednost
+        emit("update:modelValue", savedProjectName.value); // Emitiraj novu vrijednost
     }
     isEditing.value = false;
 }
