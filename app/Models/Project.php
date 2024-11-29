@@ -42,4 +42,9 @@ class Project extends Model implements HasMedia
             ->height(300)
             ->sharpen(10);
     }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

@@ -90,6 +90,11 @@ function cancelEdit() {
                     text-xl font-semibold p-0 m-0 focus:ring-transparent w-fit"
                 />
             </div>
+            <div class="ml-auto">
+                <slot name="actions">
+                    <!-- Save button -->
+                </slot>
+            </div>
         </div>
     </div>
 </template>

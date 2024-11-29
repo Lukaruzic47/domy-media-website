@@ -43,6 +43,10 @@ Route::get('/projects/{slug}/edit', [ProjectController::class, 'edit'])
     ->middleware(['auth', 'verified'])
     ->name('projects.edit');
 
+Route::put('/projects/{project:slug}', [ProjectController::class, 'update'])
+    ->middleware(['auth', 'verified'])
+    ->name('projects.update');
+
 /**
  * Media routes.
  */

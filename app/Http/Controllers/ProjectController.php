@@ -74,22 +74,28 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        $project->update($request->only([
-            'title', 'author', 'description', 'date', 'visible', 'category', 'slug', 'youtubeURL', 'metadata'
-        ]));
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'nullable|string|max:255',
+            'date' => 'nullable|date',
+            'category' => 'nullable|string|max:255',
+        ]);
+
+        $validated['slug'] = Str::slug($validated['title']);
 
         // Ponovno dodavanje medija ako je priložen novi
-        if ($request->hasFile('image')) {
-            $project->clearMediaCollection('images'); // Obriši postojeće slike
-            $project->addMedia($request->file('image'))->toMediaCollection('images');
-        }
+//        if ($request->hasFile('image')) {
+//            $project->clearMediaCollection('images'); // Obriši postojeće slike
+//            $project->addMedia($request->file('image'))->toMediaCollection('images');
+//        }
+//
+//        if ($request->hasFile('video')) {
+//            $project->clearMediaCollection('videos'); // Obriši postojeće videozapise
+//            $project->addMedia($request->file('video'))->toMediaCollection('videos');
+//        }
+        $project->update($validated);
 
-        if ($request->hasFile('video')) {
-            $project->clearMediaCollection('videos'); // Obriši postojeće videozapise
-            $project->addMedia($request->file('video'))->toMediaCollection('videos');
-        }
-
-        return redirect()->route('projects.index')->with('success', 'Project updated successfully.');
+        return redirect()->route('projects.edit', ['slug' => $validated['slug']])->with('success', 'Project updated successfully');
     }
 
     /**
