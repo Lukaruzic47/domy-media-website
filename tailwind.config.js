@@ -23,6 +23,7 @@ export default {
                 'transparent-dark-blue': 'rgb(44,57,74, 0.5)',
                 'transparent-darker-blue': 'rgba(14, 19, 31, 0.5)',
                 'primary-light-red': '#FF1A47',
+                'darkest-gray': '#111313',
             },
         },
     },
