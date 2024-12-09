@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('projects', function (Blueprint $table) {
-            $table->string('tiktokURL')->nullable()->after('youtubeURL');
-            $table->string('instagramURL')->nullable()->after('tiktokURL');
+            $table->string('tiktok_url')->nullable()->after('youtubeURL');
+            $table->string('instagram_url')->nullable()->after('tiktokURL');
         });
     }
 

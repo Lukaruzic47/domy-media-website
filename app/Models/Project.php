@@ -22,7 +22,9 @@ class Project extends Model implements HasMedia
         'metadata',
         'category',
         'slug',
-        'youtubeURL',
+        'youtube_url',
+        'instagram_url',
+        'tiktok_url',
     ];
 
     public function projectMedia()

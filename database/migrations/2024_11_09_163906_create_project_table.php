@@ -21,7 +21,7 @@ return new class extends Migration
             $table->json('metadata')->nullable();
             $table->string('category')->nullable(false);
             $table->string('slug')->nullable(false);
-            $table->string('youtubeURL')->nullable();
+            $table->string('youtube_url')->nullable();
             $table->timestamps();
         });
     }

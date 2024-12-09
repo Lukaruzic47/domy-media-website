@@ -79,10 +79,13 @@ class ProjectController extends Controller
             'author' => 'nullable|string|max:255',
             'date' => 'nullable|date',
             'category' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'youtube_url' => 'nullable|string|max:255',
+            'instagram_url' => 'nullable|string|max:255',
+            'tiktok_url' => 'nullable|string|max:255',
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);
-
         // Ponovno dodavanje medija ako je priložen novi
 //        if ($request->hasFile('image')) {
 //            $project->clearMediaCollection('images'); // Obriši postojeće slike
@@ -93,6 +96,7 @@ class ProjectController extends Controller
 //            $project->clearMediaCollection('videos'); // Obriši postojeće videozapise
 //            $project->addMedia($request->file('video'))->toMediaCollection('videos');
 //        }
+//        dd($validated);
         $project->update($validated);
 
         return redirect()->route('projects.edit', ['slug' => $validated['slug']])->with('success', 'Project updated successfully');

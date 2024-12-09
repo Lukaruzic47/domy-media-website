@@ -80,10 +80,10 @@ function submit() {
                         class="rounded-md bg-gray-300 my-2 cursor-pointer"
                         v-model="project.category"
                     >
-                        <option class="font-medium" value="Music video">Music video</option>
-                        <option class="font-medium" value="Commercial">Commercial</option>
-                        <option class="font-medium" value="Event">Event</option>
-                        <option class="font-medium" value="Behind the scenes">Behind the scenes</option>
+                        <option class="font-medium" value="music_video">Music video</option>
+                        <option class="font-medium" value="commercial">Commercial</option>
+                        <option class="font-medium" value="event">Event</option>
+                        <option class="font-medium" value="behind_the_scenes">Behind the scenes</option>
                     </select>
                     <span v-if="errors.category" class="text-red-500 text-sm font-normal mr-auto">{{
                             errors.category

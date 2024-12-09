@@ -1,5 +1,6 @@
 <script setup>
-import {ref, watch, defineProps, nextTick, defineEmits} from "vue";
+import { ref, watch, defineProps, nextTick, defineEmits } from "vue";
+import EditTextIcon from "@/Components/Edit/EditTextIcon.vue";
 
 const props = defineProps({
     modelValue: {
@@ -7,75 +8,49 @@ const props = defineProps({
         required: true,
     },
 });
-
 const emit = defineEmits(["update:modelValue"]);
 
-// Reference i reaktivni podaci
 const inputRef = ref(null);
 const isEditing = ref(false);
 const editedProjectName = ref(props.modelValue);
-const savedProjectName = ref(props.modelValue); // Praćenje zadnje spremljene vrijednosti
 
-// Pratimo promjene props vrijednosti
 watch(() => props.modelValue, (value) => {
-    // Ažuriraj samo ako je došlo do promjene
-    if (savedProjectName.value !== value) {
+    if (editedProjectName.value !== value) {
         editedProjectName.value = value;
-        savedProjectName.value = value;
     }
 });
 
-// Funkcija za početak uređivanja
-function editTitle() {
+const editTitle = () => {
     isEditing.value = true;
+    nextTick(() => inputRef.value?.focus());
+};
 
-    nextTick(() => {
-        inputRef.value?.focus();
-    });
-}
-
-// Funkcija za spremanje promjene naslova
-function saveTitle() {
+const saveTitle = () => {
     if (editedProjectName.value.trim() === "") {
-        editedProjectName.value = savedProjectName.value; // Reset ako je prazno
-    } else if (editedProjectName.value !== savedProjectName.value) {
-        savedProjectName.value = editedProjectName.value;
-        emit("update:modelValue", savedProjectName.value);
+        editedProjectName.value = props.modelValue; // Resetiraj na početnu vrijednost
+    } else if (editedProjectName.value !== props.modelValue) {
+        emit("update:modelValue", editedProjectName.value); // Emitiraj novu vrijednost
     }
     isEditing.value = false;
-}
+};
 
-// Funkcija za otkazivanje uređivanja
-function cancelEdit() {
-    editedProjectName.value = savedProjectName.value; // Vraćanje na zadnju spremljenu vrijednost
+const cancelEdit = () => {
+    editedProjectName.value = props.modelValue; // Vrati na početnu vrijednost
     isEditing.value = false;
-}
+};
 </script>
 
 <template>
     <div class="bg-zinc-800 drop-shadow-lg">
         <div class="mx-8 h-16 flex items-center">
             <!-- Prikaz naslova ili input polja -->
-            <div v-if="!isEditing" class="flex items-center">
+            <div v-if="!isEditing" class="flex items-center" @click="editTitle">
                 <h1
                     class="text-xl font-semibold text-gray-300 cursor-pointer"
-                    @click="editTitle"
                 >
-                    {{ savedProjectName }}
+                    {{ props.modelValue }}
                 </h1>
-                <!-- Ikona za uređivanje -->
-                <svg
-                    @click="editTitle"
-                    class="ml-2 w-5 h-5 text-gray-300 cursor-pointer hover:text-gray-400"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                >
-                    <path
-                        d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/>
-                    <path
-                        d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/>
-                </svg>
+                <EditTextIcon/>
             </div>
 
             <!-- Input polje za uređivanje -->
@@ -86,7 +61,7 @@ function cancelEdit() {
                     v-model="editedProjectName"
                     @keydown.enter="saveTitle"
                     @keydown.escape="cancelEdit"
-                    @blur="cancelEdit"
+                    @blur="saveTitle"
                     class="border-none bg-zinc-900 rounded focus:outline-none text-gray-800 dark:text-gray-200
                     text-xl font-semibold p-0 m-0 focus:ring-transparent w-fit"
                 />

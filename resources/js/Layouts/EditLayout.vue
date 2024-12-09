@@ -12,8 +12,8 @@ const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen bg-gray-100 dark:bg-darkest-gray">
+    <div class="h-full">
+        <div class="bg-gray-100 dark:bg-darkest-gray min-h-full">
             <nav
                 class="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-zinc-800"
             >
@@ -201,7 +201,7 @@ const showingNavigationDropdown = ref(false);
             </header>
 
             <!-- Page Content -->
-            <main>
+            <main class="h-auto">
                 <slot/>
             </main>
         </div>
