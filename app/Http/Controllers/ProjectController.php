@@ -76,9 +76,9 @@ class ProjectController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'author' => 'nullable|string|max:255',
+            'author' => 'required|string|max:255',
             'date' => 'nullable|date',
-            'category' => 'nullable|string|max:255',
+            'category' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
             'youtube_url' => 'nullable|string|max:255',
             'instagram_url' => 'nullable|string|max:255',

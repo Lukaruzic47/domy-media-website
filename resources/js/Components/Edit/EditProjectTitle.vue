@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, defineProps, nextTick, defineEmits } from "vue";
+import {ref, watch, defineProps, nextTick, defineEmits} from "vue";
 import EditTextIcon from "@/Components/Edit/EditTextIcon.vue";
 
 const props = defineProps({
@@ -66,6 +66,7 @@ const cancelEdit = () => {
                     text-xl font-semibold p-0 m-0 focus:ring-transparent w-fit"
                 />
             </div>
+            <div v-if="$page.props.errors.title" v-text="$page.props.errors.title" class="text-red-700"></div>
             <div class="ml-auto">
                 <slot name="actions">
                     <!-- Save button -->

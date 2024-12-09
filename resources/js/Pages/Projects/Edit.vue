@@ -17,7 +17,6 @@ const props = defineProps({
 
 // Create a reactive project object
 const project = ref({...props.project});
-console.log(project.value);
 
 // Create the form with initial values
 const form = useForm({
@@ -43,7 +42,7 @@ watch(() => project.value, (newProject) => {
     form.instagram_url = newProject.instagram_url;
     form.tiktok_url = newProject.tiktok_url;
     form.slug = newProject.slug;
-}, { deep: true });
+}, {deep: true});
 
 const sidebarTab = ref("Layout");
 const updateResetValues = ref(false);
@@ -58,7 +57,7 @@ function saveProject() {
             // Preusmjeri na novi slug ili osvježi rutu
             if (page.props.project.slug !== route().params.slug) {
                 // Koristite Inertia visit za osvježavanje rute
-                Inertia.visit(route('projects.edit', { slug: page.props.project.slug }), {
+                Inertia.visit(route('projects.edit', {slug: page.props.project.slug}), {
                     preserveState: true,
                     preserveScroll: true,
                 });

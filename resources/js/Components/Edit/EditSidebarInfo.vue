@@ -8,8 +8,8 @@ const props = defineProps({
         required: true,
     },
     updateReset: {
-        type: Boolean
-    }
+        type: Boolean,
+    },
 });
 
 const resetToValues = {};
@@ -121,9 +121,11 @@ function resetInputs() {
     editedTikTokUrl.value = resetToValues.tiktok_url;
     saveText();
 }
+
 </script>
 
 <template>
+
     <div class="w-full min-h-1 mt-5">
         <div>
             <div v-if="!isEditingAuthor" class="flex items-center cursor-pointer w-fit" @click="editAuthor">
@@ -140,11 +142,12 @@ function resetInputs() {
                     @keydown.enter="saveAuthor"
                     @keydown.escape="cancelAuthorEdit"
                     @blur="saveAuthor"
-
                     class="border-none bg-transparent focus:outline-none text-white dark:text-gray-200
-                      p-0 m-0 focus:ring-transparent"
+                    p-0 m-0 focus:ring-transparent"
                 />
             </div>
+            <div v-if="$page.props.errors.author" v-text="$page.props.errors.author" class="text-red-700"></div>
+
         </div>
 
         <div>
@@ -181,6 +184,7 @@ function resetInputs() {
                     </option>
                 </select>
             </div>
+            <div v-if="$page.props.errors.category" v-text="$page.props.errors.category" class="text-red-700"></div>
         </div>
 
         <div v-if="!isEditingDate" class="flex items-center cursor-pointer w-fit" @click="editDate()">
@@ -207,6 +211,7 @@ function resetInputs() {
                       p-0 m-0 focus:ring-transparent"
             />
         </div>
+        <div v-if="$page.props.errors.date" v-text="$page.props.errors.date" class="text-red-700"></div>
 
         <div class="mt-5">
             <label class="text-base text-gray-200">Description:</label>
@@ -216,6 +221,7 @@ function resetInputs() {
                 v-model="editedDescription"
                 @change="saveText"
             ></textarea>
+            <div v-if="$page.props.errors.description" v-text="$page.props.errors.description" class="text-red-700"></div>
         </div>
 
         <div class="mt-5">
@@ -226,6 +232,7 @@ function resetInputs() {
                 v-model="editedYoutubeUrl"
                 @change="saveText"
             />
+            <div v-if="$page.props.errors.youtube_url" v-text="$page.props.errors.youtube_url" class="text-red-700"></div>
         </div>
 
         <div class="mt-5">
@@ -236,6 +243,7 @@ function resetInputs() {
                 v-model="editedInstagramUrl"
                 @change="saveText"
             />
+            <div v-if="$page.props.errors.instagram_url" v-text="$page.props.errors.instagram_url" class="text-red-700"></div>
         </div>
 
         <div class="mt-5">
@@ -246,6 +254,7 @@ function resetInputs() {
                 v-model="editedTikTokUrl"
                 @change="saveText"
             />
+            <div v-if="$page.props.errors.tiktok_url" v-text="$page.props.errors.tiktok_url" class="text-red-700"></div>
         </div>
         <div>
             <button
