@@ -74,7 +74,7 @@ const props = defineProps({
                         'justify-center',
                         published
                          ? ['bg-transparent', 'border-2', 'border-primary-light-red', 'py-1.5', 'hover:bg-primary-light-red']
-                         : ['bg-primary-light-red', 'py-2', 'hover:bg-secondary-darker-blue'],
+                         : ['bg-primary-light-red', 'py-2', 'hover:bg-secondary-dark-blue'],
                         'rounded-md',
                         'text-base',
                         'font-semibold',

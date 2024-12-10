@@ -1,6 +1,6 @@
 <script setup>
 import {ref, watch, defineProps, nextTick, defineEmits} from "vue";
-import EditTextIcon from "@/Components/Edit/EditTextIcon.vue";
+import EditTextIcon from "@/Components/Icons/EditTextIcon.vue";
 
 const props = defineProps({
     modelValue: {

@@ -4,6 +4,7 @@ import EditProjectTitle from "@/Components/Edit/EditProjectTitle.vue";
 import EditSidebarInfo from "@/Components/Edit/EditSidebarInfo.vue";
 import EditSidebarLayout from "@/Components/Edit/EditSidebarLayout.vue";
 import ToggleSwitch from "@/Components/ToggleSwitch.vue";
+import CloseIcon from "@/Components/Icons/CloseIcon.vue";
 import {Head, useForm} from "@inertiajs/vue3";
 import {ref, defineProps, watch} from "vue";
 
@@ -17,6 +18,7 @@ const props = defineProps({
 
 // Create a reactive project object
 const project = ref({...props.project});
+const saved = ref(false);
 
 // Create the form with initial values
 const form = useForm({
@@ -31,6 +33,10 @@ const form = useForm({
     slug: project.value.slug,
 });
 
+const sidebarTab = ref("Layout");
+const updateResetValues = ref(false);
+const projectSaved = ref(false);
+
 // Watch for changes in the project object and update form accordingly
 watch(() => project.value, (newProject) => {
     form.title = newProject.title;
@@ -44,26 +50,21 @@ watch(() => project.value, (newProject) => {
     form.slug = newProject.slug;
 }, {deep: true});
 
-const sidebarTab = ref("Layout");
-const updateResetValues = ref(false);
+function saveProjectPopup() {
+    projectSaved.value = true;
+
+    setTimeout(() => {
+        projectSaved.value = false;
+    }, 1500);
+}
 
 function saveProject() {
     form.put(route('projects.update', project.value.slug), {
         preserveScroll: true,
         onSuccess: (page) => {
-            // Ažuriraj slug nakon uspješnog spremanja
             project.value.slug = page.props.project.slug;
-
-            // Preusmjeri na novi slug ili osvježi rutu
-            if (page.props.project.slug !== route().params.slug) {
-                // Koristite Inertia visit za osvježavanje rute
-                Inertia.visit(route('projects.edit', {slug: page.props.project.slug}), {
-                    preserveState: true,
-                    preserveScroll: true,
-                });
-            }
-
             updateResetValues.value = !updateResetValues.value;
+            saveProjectPopup();
         },
         onError: (errors) => {
             console.error('Errors saving project', errors);
@@ -91,14 +92,14 @@ function toggleSidebar(option) {
                 <button
                     @click="saveProject"
                     :disabled="form.processing"
-                    class="bg-zinc-700 text-white px-4 py-2 rounded-md shadow-md hover:bg-zinc-600 disabled:opacity-50"
+                    class="bg-zinc-700 text-white px-4 py-2 rounded-md shadow-md hover:bg-zinc-600 disabled:opacity-50 active:bg-zinc-500"
                 >
                     Save
                 </button>
                 <button
                     @click="previewProject"
                     :disabled="form.processing"
-                    class="ml-2 bg-zinc-700 text-white px-4 py-2 rounded-md shadow-md hover:bg-zinc-600 disabled:opacity-50"
+                    class="ml-2 bg-zinc-700 text-white px-4 py-2 rounded-md shadow-md hover:bg-zinc-600 disabled:opacity-50 active:bg-zinc-500"
                 >
                     Preview
                 </button>
@@ -132,4 +133,21 @@ function toggleSidebar(option) {
             </div>
         </div>
     </EditLayout>
+    <!-- Project saved message -->
+    <transition
+        enter-active-class="transition-all duration-500 ease-out"
+        leave-active-class="transition-all duration-500 ease-in"
+        enter-from-class="opacity-0 translate-y-[-20px]"
+        leave-to-class="opacity-0 translate-y-[-20px]"
+    >
+        <div
+            v-if="projectSaved"
+            class="fixed top-0 left-1/2 -translate-x-1/2 m-2 bg-zinc-300 text-gray-800 py-2 px-4
+      cursor-pointer rounded-sm flex flex-row items-center "
+            @click="projectSaved = false"
+        >
+            Project saved
+            <CloseIcon class="w-5 h-5 inline-block ml-4"/>
+        </div>
+    </transition>
 </template>

@@ -1,6 +1,6 @@
 <script setup>
 import {defineProps, toRefs, ref, nextTick, watch, onMounted} from "vue";
-import EditTextIcon from "@/Components/Edit/EditTextIcon.vue";
+import EditTextIcon from "@/Components/Icons/EditTextIcon.vue";
 
 const props = defineProps({
     modelValue: {
@@ -258,7 +258,7 @@ function resetInputs() {
         </div>
         <div>
             <button
-                class="bg-zinc-700 text-white px-4 py-2 rounded-md shadow-md hover:bg-zinc-600 mt-5 ml-auto block"
+                class="bg-zinc-700 text-white px-4 py-2 rounded-md shadow-md hover:bg-zinc-600 mt-5 ml-auto block active:bg-zinc-500"
                 @click="resetInputs"
             >
                 Reset
