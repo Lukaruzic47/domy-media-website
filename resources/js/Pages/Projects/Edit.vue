@@ -18,7 +18,7 @@ const props = defineProps({
 
 // Create a reactive project object
 const project = ref({...props.project});
-const saved = ref(false);
+const saved = ref(true);
 
 // Create the form with initial values
 const form = useForm({
@@ -48,6 +48,7 @@ watch(() => project.value, (newProject) => {
     form.instagram_url = newProject.instagram_url;
     form.tiktok_url = newProject.tiktok_url;
     form.slug = newProject.slug;
+    saved.value = false;
 }, {deep: true});
 
 function saveProjectPopup() {
@@ -65,6 +66,7 @@ function saveProject() {
             project.value.slug = page.props.project.slug;
             updateResetValues.value = !updateResetValues.value;
             saveProjectPopup();
+            saved.value = true;
         },
         onError: (errors) => {
             console.error('Errors saving project', errors);
@@ -92,8 +94,12 @@ function toggleSidebar(option) {
                 <button
                     @click="saveProject"
                     :disabled="form.processing"
-                    class="bg-zinc-700 text-white px-4 py-2 rounded-md shadow-md hover:bg-zinc-600 disabled:opacity-50 active:bg-zinc-500"
-                >
+                    :class="[
+                        'text-white px-4 py-2 rounded-md shadow-md hover:bg-zinc-600 disabled:opacity-50 active:bg-zinc-500 transition ease-in-out duration-500',
+                    saved
+                        ? 'bg-zinc-700'
+                        : 'bg-zinc-500 animate-pulse hover:animate-none',
+                    ]">
                     Save
                 </button>
                 <button
@@ -116,7 +122,6 @@ function toggleSidebar(option) {
                 <keep-alive>
                     <EditSidebarInfo
                         :updateReset="updateResetValues"
-                        ref="infoSidebar"
                         v-if="sidebarTab === 'Info'"
                         v-model="project"
                     />
@@ -151,3 +156,13 @@ function toggleSidebar(option) {
         </div>
     </transition>
 </template>
+<style scoped>
+@keyframes pulseBg {
+    0% {
+        background-color: #71717a; /* bg-zinc-600 */
+    }
+    100% {
+        background-color: #52525b; /* bg-zinc-500 */
+    }
+}
+</style>
