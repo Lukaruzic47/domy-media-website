@@ -6,7 +6,9 @@ import EditSidebarLayout from "@/Components/Edit/EditSidebarLayout.vue";
 import ToggleSwitch from "@/Components/ToggleSwitch.vue";
 import CloseIcon from "@/Components/Icons/CloseIcon.vue";
 import {Head, useForm} from "@inertiajs/vue3";
-import {ref, defineProps, watch} from "vue";
+import {ref, defineProps, watch, onMounted} from "vue";
+import emitter from "@/Components/Edit/EditMitter.js";
+import axios from "axios";
 
 // Primanje podataka iz props-a
 const props = defineProps({
@@ -25,12 +27,14 @@ const form = useForm({
     title: project.value.title,
     author: project.value.author,
     category: project.value.category,
+    thumbnail: project.value.thumbnail || null,
     date: project.value.date,
     description: project.value.description,
     youtube_url: project.value.youtube_url,
     instagram_url: project.value.instagram_url,
     tiktok_url: project.value.tiktok_url,
     slug: project.value.slug,
+    main_video: project.value.main_video || null,
 });
 
 const sidebarTab = ref("Layout");
@@ -42,14 +46,52 @@ watch(() => project.value, (newProject) => {
     form.title = newProject.title;
     form.author = newProject.author;
     form.category = newProject.category;
+    form.thumbnail = newProject.thumbnail;
     form.date = newProject.date;
     form.description = newProject.description;
     form.youtube_url = newProject.youtube_url;
     form.instagram_url = newProject.instagram_url;
     form.tiktok_url = newProject.tiktok_url;
     form.slug = newProject.slug;
+    form.main_video = newProject.main_video;
     saved.value = false;
 }, {deep: true});
+
+// onMounted(() => {
+//     emitter.on('update:mainVideo', (payload) => {
+//         mainVideo.value = payload;
+//     });
+// });
+
+emitter.on('update:mainVideo', (payload) => {
+    if (payload instanceof File) {
+        form.main_video = payload;
+    }
+    else if (payload === null) {
+        form.main_video = null;
+    }
+    else if (payload === 'delete') {
+        form.main_video = 'delete';
+    }
+    else {
+        console.error('Invalid payload for main video', payload);
+    }
+});
+
+emitter.on('update:thumbnail', (payload) => {
+    if (payload instanceof File) {
+        form.thumbnail = payload;
+    }
+    else if (payload === null) {
+        form.thumbnail = null;
+    }
+    else if (payload === 'delete'){
+        form.thumbnail = 'delete';
+    }
+    else{
+        console.error('Invalid payload for thumbnail', payload);
+    }
+});
 
 function saveProjectPopup() {
     projectSaved.value = true;
@@ -60,18 +102,38 @@ function saveProjectPopup() {
 }
 
 function saveProject() {
-    form.put(route('projects.update', project.value.slug), {
-        preserveScroll: true,
-        onSuccess: (page) => {
-            project.value.slug = page.props.project.slug;
-            updateResetValues.value = !updateResetValues.value;
-            saveProjectPopup();
-            saved.value = true;
-        },
-        onError: (errors) => {
-            console.error('Errors saving project', errors);
-        }
-    });
+    if (form.main_video || form.thumbnail) {
+        form.post(route('projects.update', project.value.slug), {
+            _method: 'PUT',
+            preserveScroll: true,
+            forceFormData: true,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            onSuccess: (page) => {
+                project.value.slug = page.props.project.slug;
+                updateResetValues.value = !updateResetValues.value;
+                saveProjectPopup();
+                saved.value = true;
+            },
+            onError: (errors) => {
+                console.error('Errors saving project', errors);
+            },
+        });
+    } else {
+        form.put(route('projects.update', project.value.slug), {
+            preserveScroll: true,
+            onSuccess: (page) => {
+                project.value.slug = page.props.project.slug;
+                updateResetValues.value = !updateResetValues.value;
+                saveProjectPopup();
+                saved.value = true;
+            },
+            onError: (errors) => {
+                console.error('Errors saving project', errors);
+            },
+        });
+    }
 }
 
 function previewProject() {

@@ -47,6 +47,10 @@ Route::put('/projects/{project:slug}', [ProjectController::class, 'update'])
     ->middleware(['auth', 'verified'])
     ->name('projects.update');
 
+Route::post('/projects/{project:slug}', [ProjectController::class, 'update'])
+    ->middleware(['auth', 'verified'])
+    ->name('projects.update');
+
 /**
  * Media routes.
  */

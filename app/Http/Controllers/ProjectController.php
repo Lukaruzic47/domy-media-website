@@ -6,6 +6,7 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -79,34 +80,64 @@ class ProjectController extends Controller
             'author' => 'required|string|max:255',
             'date' => 'nullable|date',
             'category' => 'required|string|max:255',
+            'thumbnail' => $request->input('thumbnail') === 'delete' ? 'string' :
+                ($request->hasFile('thumbnail') ? 'file|mimes:jpg,jpeg,png,webp|max:4096' : 'nullable'),
             'description' => 'nullable|string|max:2000',
             'youtube_url' => 'nullable|string|max:255',
             'instagram_url' => 'nullable|string|max:255',
             'tiktok_url' => 'nullable|string|max:255',
-        ]);
+            'main_video' => $request->input('main_video') === 'delete' ? 'string' :
+                ($request->hasFile('main_video') ? 'file|mimes:mp4,mov,avi,wmv|max:20480' : 'nullable'),        ]);
 
         $validated['slug'] = Str::slug($validated['title']);
-        // Ponovno dodavanje medija ako je priložen novi
-//        if ($request->hasFile('image')) {
-//            $project->clearMediaCollection('images'); // Obriši postojeće slike
-//            $project->addMedia($request->file('image'))->toMediaCollection('images');
-//        }
-//
-//        if ($request->hasFile('video')) {
-//            $project->clearMediaCollection('videos'); // Obriši postojeće videozapise
-//            $project->addMedia($request->file('video'))->toMediaCollection('videos');
-//        }
-//        dd($validated);
-        $project->update($validated);
+        try {
+            if ($request->hasFile('main_video')) {
+                if ($project->main_video) {
+                    Storage::disk('public')->delete($project->main_video);
+                }
 
-        return redirect()->route('projects.edit', ['slug' => $validated['slug']])->with('success', 'Project updated successfully');
+                $projectPath = 'videos/project-' . $project->id;
+                $path = $request->file('main_video')->store($projectPath, 'public');
+                $validated['main_video'] = $path;
+
+            }
+            if ($request->hasFile('thumbnail')) {
+                if ($project->thumbnail) {
+                    Storage::disk('public')->delete($project->thumbnail);
+                }
+
+                $projectPath = 'thumbnail/project-' . $project->id;
+                $path = $request->file('thumbnail')->store($projectPath, 'public');
+                $validated['thumbnail'] = $path;
+
+            }
+            if($request->input('thumbnail') === 'delete' && $project->thumbnail) {
+                Storage::disk('public')->delete($project->thumbnail);
+                $validated['thumbnail'] = null;
+            }
+            if ($request->input('main_video') === 'delete' && $project->main_video) {
+                Storage::disk('public')->delete($project->main_video);
+                $validated['main_video'] = null;
+            }
+
+            $project->update($validated);
+
+            return redirect()
+                ->route('projects.edit', $project)
+                ->with('success', 'Project updated successfully');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to update project: ' . $e->getMessage());
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
 
-    public function destroy(Project $project)
+    public
+    function destroy(Project $project)
     {
         $project->delete();
         return redirect()->route('projects.index')->with('success', 'Project deleted successfully');
