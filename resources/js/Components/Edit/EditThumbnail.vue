@@ -62,7 +62,7 @@ function removeThumbnail() {
 </script>
 
 <template>
-    <label class="text-base text-gray-200">Video thumbnail:</label>
+    <label class="text-base text-gray-200 font-medium">Project thumbnail:</label>
     <div :class="['bg-zinc-900 rounded-lg shadow-md mt-0.5', thumbnail ? 'p-0' : 'p-4']">
         <div
             @dragover.prevent

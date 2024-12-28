@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\ProjectImageController;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
@@ -59,13 +60,17 @@ Route::get('/media', [MediaController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('media');
 
-Route::get('/about', function () {
-    return Inertia::render('About');
-})->name('about');
-
-Route::get('/contact', function () {
-    return Inertia::render('Contact');
-})->name('contact');
+Route::prefix('projects')->group(function () {
+    Route::get('{project}/get-images', [ProjectImageController::class, 'getImages'])
+        ->middleware(['auth', 'verified'])
+        ->name('projects.images.index');
+    Route::post('{project}/upload-images', [ProjectImageController::class, 'upload'])
+        ->middleware(['auth', 'verified'])
+        ->name('projects.images.upload');
+    Route::delete('images/{image}', [ProjectImageController::class, 'destroy'])
+        ->middleware(['auth', 'verified'])
+        ->name('projects.images.destroy');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

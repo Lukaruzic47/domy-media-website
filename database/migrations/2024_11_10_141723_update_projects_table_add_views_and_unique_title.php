@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::table('projects', function (Blueprint $table) {
             $table->string('title')->unique()->change();
-            $table->unsignedBigInteger('views')->default(0)->after('youtubeURL');
+            $table->unsignedBigInteger('views')->default(0)->after('youtube_url');
         });
     }
 

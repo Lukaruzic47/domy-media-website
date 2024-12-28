@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('projects', function (Blueprint $table) {
-            $table->string('tiktok_url')->nullable()->after('youtubeURL');
-            $table->string('instagram_url')->nullable()->after('tiktokURL');
+            $table->string('tiktok_url')->nullable()->after('youtube_url');
+            $table->string('instagram_url')->nullable()->after('tiktok_url');
         });
     }
 
@@ -23,8 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('projects', function (Blueprint $table) {
-            $table->dropColumn('tiktokURL');
-            $table->dropColumn('instagramURL');
+            $table->dropColumn('tiktok_url');
+            $table->dropColumn('instagram_url');
         });
     }
 };

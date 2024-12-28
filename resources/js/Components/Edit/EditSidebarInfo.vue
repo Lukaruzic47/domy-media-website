@@ -128,7 +128,7 @@ function resetInputs() {
 
     <div class="w-full min-h-1 mt-5">
         <div>
-            <div v-if="!isEditingAuthor" class="flex items-center cursor-pointer w-fit" @click="editAuthor">
+            <div v-if="!isEditingAuthor" class="flex items-center cursor-pointer w-fit font-medium" @click="editAuthor">
                 <h4 class="text-base text-gray-200">
                     {{ modelValue.author }}
                 </h4>
@@ -153,7 +153,7 @@ function resetInputs() {
         <div>
             <div>
                 <select
-                    class="p-0 bg-transparent border-none cursor-pointer dark:text-gray-200 focus:outline-none focus:ring-transparent indent-0 appearance-none w-fit"
+                    class="p-0 bg-transparent border-none cursor-pointer dark:text-gray-200 focus:outline-none focus:ring-transparent indent-0 appearance-none w-fit font-medium"
                     v-model="editedCategory"
                     @change="saveCategory"
                     style="-moz-appearance: none; -webkit-appearance: none; appearance: none; background-image: none;">
@@ -188,7 +188,7 @@ function resetInputs() {
         </div>
 
         <div v-if="!isEditingDate" class="flex items-center cursor-pointer w-fit" @click="editDate()">
-            <h4 class="text-base text-gray-200">
+            <h4 class="font-medium text-gray-200">
                 {{
                     new Date(modelValue.date).toLocaleDateString('en-US', {
                         month: 'long',
@@ -214,7 +214,7 @@ function resetInputs() {
         <div v-if="$page.props.errors.date" v-text="$page.props.errors.date" class="text-red-700"></div>
 
         <div class="mt-5">
-            <label class="text-base text-gray-200">Description:</label>
+            <label class="text-base text-gray-200 font-medium">Description:</label>
             <textarea
                 class="w-full rounded-md bg-zinc-900 border-none mt-0.5 focus:text-white text-gray-200"
                 rows="10"
@@ -225,7 +225,7 @@ function resetInputs() {
         </div>
 
         <div class="mt-5">
-            <label class="text-base text-gray-200">Youtube URL:</label>
+            <label class="text-base text-gray-200 font-medium">Youtube URL:</label>
             <input
                 type="text"
                 class="w-full rounded-md bg-zinc-900 border-none mt-0.5 focus:text-white text-gray-200"
@@ -236,7 +236,7 @@ function resetInputs() {
         </div>
 
         <div class="mt-5">
-            <label class="text-base text-gray-200">Instagram URL:</label>
+            <label class="text-base text-gray-200 font-medium">Instagram URL:</label>
             <input
                 type="text"
                 class="w-full rounded-md bg-zinc-900 border-none mt-0.5 focus:text-white text-gray-200"
@@ -247,7 +247,7 @@ function resetInputs() {
         </div>
 
         <div class="mt-5">
-            <label class="text-base text-gray-200">TikTok URL:</label>
+            <label class="text-base text-gray-200 font-medium">TikTok URL:</label>
             <input
                 type="text"
                 class="w-full rounded-md bg-zinc-900 border-none mt-0.5 focus:text-white text-gray-200"

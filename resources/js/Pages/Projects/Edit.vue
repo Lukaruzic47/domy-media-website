@@ -57,12 +57,6 @@ watch(() => project.value, (newProject) => {
     saved.value = false;
 }, {deep: true});
 
-// onMounted(() => {
-//     emitter.on('update:mainVideo', (payload) => {
-//         mainVideo.value = payload;
-//     });
-// });
-
 emitter.on('update:mainVideo', (payload) => {
     if (payload instanceof File) {
         form.main_video = payload;
@@ -174,8 +168,8 @@ function toggleSidebar(option) {
             </template>
         </EditProjectTitle>
 
-        <div class="flex flex-row">
-            <div class="xl:w-80 py-4 px-5 bg-zinc-800 h-[calc(100vh-129px)]">
+        <div class="flex flex-row overflow-y-auto">
+            <div class="xl:w-80 py-4 px-5 bg-zinc-800 h-auto min-h-[calc(100vh-129px)]">
                 <ToggleSwitch
                     class="drop-shadow-md"
                     :options="['Layout', 'Info']"

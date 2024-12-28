@@ -1,6 +1,7 @@
 <script setup>
 // import { props } from 'vue';
 import {Link} from "@inertiajs/vue3";
+import {onMounted, ref, defineProps} from "vue";
 
 const props = defineProps({
     title: {
@@ -33,19 +34,35 @@ const props = defineProps({
     },
 });
 
+const image = ref(null);
+onMounted(() => {
+    if (props.image) {
+        image.value = `/storage/${props.image}`;
+    }
+});
 
+function formatCategory(category) {
+    const categoryMap = {
+        'music_video': 'Music video',
+        'commercial': 'Commercial',
+        'event': 'Event',
+        'behind_the_scenes': 'Behind the scenes'
+    };
+
+    return categoryMap[category] || category;
+}
 </script>
 
 <template>
     <div class="h-40 text-gray-800 dark:text-gray-200 bg-primary-darker-blue rounded-xl p-2.5 flex shadow-md">
-        <img :src="image" class="w-64 h-full rounded-md object-cover" alt="{{ title }} image">
+        <img :src="image" class="w-64 h-full rounded-md object-cover" :alt="`${title} image`">
         <div class="ml-3 flex-1 flex-col flex justify-between">
             <div class="flex justify-between mt-1">
                 <h2 class="text-xl font-semibold leading-5">{{ title }}</h2>
                 <span class="cursor-pointer hover:text-white duration-200 ease-in-out transition">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-5">
                         <path
-                          d="M8 2a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM8 6.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM9.5 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"/>
+                            d="M8 2a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM8 6.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM9.5 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"/>
                     </svg>
 
                 </span>
@@ -55,7 +72,7 @@ const props = defineProps({
                     <span class="" v-if="views">Views {{ views }}</span>
                     <span class="" v-if="published">Status: Published</span>
                     <span class="" v-else>Status: Not published</span>
-                    <span class="" v-if="category">Category: {{ category }}</span>
+                    <span class="" v-if="category">Category: {{ formatCategory(category) }}</span>
                     <span class="" v-if="date">Publish date: {{
                             new Date(date).toLocaleDateString('en-US', {
                                 month: 'short',

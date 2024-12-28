@@ -22,13 +22,17 @@ class ProjectFactory extends Factory
             'description' => $this->faker->paragraph,
             'date' => $this->faker->date,
             'published' => $this->faker->boolean,
+            'thumbnail' => $this->faker->imageUrl(),
+            'main_video' => $this->faker->imageUrl(),
             'metadata' => json_encode([
                 'keywords' => $this->faker->words(5, true),
                 'duration' => $this->faker->numberBetween(60, 600),
             ]),
             'category' => $this->faker->word,
             'slug' => $this->faker->slug,
-            'youtubeURL' => 'https://www.youtube.com/watch?v=' . $this->faker->uuid,
+            'youtube_url' => 'https://www.youtube.com/watch?v=' . $this->faker->uuid,
+            'instagram_url' => 'https://www.instagram.com/watch?v=' . $this->faker->uuid,
+            'tiktok_url' => 'https://www.tiktok.com/watch?v=' . $this->faker->uuid,
             'views' => $this->faker->numberBetween(0, 1000),
         ];
     }

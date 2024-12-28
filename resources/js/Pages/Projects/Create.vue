@@ -1,29 +1,55 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {Head} from "@inertiajs/vue3";
-import {reactive} from "vue";
+import {reactive, watch} from "vue";
 import {ref} from "vue";
-import {Inertia} from "@inertiajs/inertia";
-// import Link from "@inertiajs/vue3";
+import {useForm} from "@inertiajs/vue3";
 
 const isCurrentDateChecked = ref(false);
-const project = reactive({
+const errors = reactive({});
+
+const form = useForm({
+    title: "",
+    author: "",
+    date: "",
+    category: "",
+})
+
+const project = ref({
     title: "",
     author: "",
     date: "",
     category: "",
 });
-const errors = reactive({});
+
+watch(() => project.value, (newProject) => {
+    form.title = newProject.title;
+    form.author = newProject.author;
+    form.date = newProject.date;
+    form.category = newProject.category;
+}, {deep: true});
 
 const useCurrentDate = () => {
     if (isCurrentDateChecked.value) {
-        project.date = new Date().toISOString().split('T')[0];
+        project.value.date = new Date().toISOString().split('T')[0];
     }
 };
 
 function submit() {
     useCurrentDate();
-    Inertia.post('/projects', project)
+    form.post('/projects', {
+        preserveState: true,
+        onSuccess: () => {
+            project.title = "";
+            project.author = "";
+            project.date = "";
+            project.category = "";
+            isCurrentDateChecked.value = false;
+        },
+        onError: (errors) => {
+            errors = errors;
+        }
+    });
 }
 
 </script>

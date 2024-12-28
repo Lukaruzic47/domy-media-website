@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('project_media', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_id')->constrained()->onDelete('cascade');
-            $table->foreignId('media_id')->constrained('media')->onDelete('cascade');
+            $table->string('path');
             $table->timestamps();
         });
     }
