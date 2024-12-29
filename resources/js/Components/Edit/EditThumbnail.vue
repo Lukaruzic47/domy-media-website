@@ -70,7 +70,7 @@ function removeThumbnail() {
             @click="imageInput.click()"
             :class="[
                 'w-full aspect-video border-zinc-600 flex items-center justify-center text-zinc-400 cursor-pointer',
-                thumbnail ? 'p-0.5 border-0 border-none' : 'border-2 p-2 border-dashed'
+                thumbnail ? 'p-0 border-0 border-none' : 'border-2 p-2 border-dashed'
             ]"
         >
             <div v-if="!thumbnail" class="text-center">
