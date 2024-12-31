@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\Media;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -62,10 +63,12 @@ class ProjectController extends Controller
      */
     public function edit($slug)
     {
-        $project = Project::where('slug', $slug)->firstOrFail();
+
+        $projectData = Project::where('slug', $slug)->firstOrFail();
+        $projectImages = Media::where('project_id', $projectData->id)->get();
 
         return Inertia::render('Projects/Edit', [
-            'project' => $project,
+            'project' => array_merge($projectData->toArray(), ['images' => $projectImages]),
         ]);
     }
 
@@ -87,7 +90,7 @@ class ProjectController extends Controller
             'instagram_url' => 'nullable|string|max:255',
             'tiktok_url' => 'nullable|string|max:255',
             'main_video' => $request->input('main_video') === 'delete' ? 'string' :
-                ($request->hasFile('main_video') ? 'file|mimes:mp4,mov,avi,wmv|max:20480' : 'nullable'),        ]);
+                ($request->hasFile('main_video') ? 'file|mimes:mp4,mov,avi,wmv|max:20480' : 'nullable'),]);
 
         $validated['slug'] = Str::slug($validated['title']);
         try {
@@ -111,7 +114,7 @@ class ProjectController extends Controller
                 $validated['thumbnail'] = $path;
 
             }
-            if($request->input('thumbnail') === 'delete' && $project->thumbnail) {
+            if ($request->input('thumbnail') === 'delete' && $project->thumbnail) {
                 Storage::disk('public')->delete($project->thumbnail);
                 $validated['thumbnail'] = null;
             }

@@ -1,18 +1,23 @@
 <script setup>
 import {ref, defineProps} from 'vue';
-import axios from 'axios';
 import CloseIcon from "@/Components/Icons/CloseIcon.vue";
+import emitter from "@/Components/Edit/EditMitter.js";
+import axios from "axios";
 
 const props = defineProps({
     projectId: {
         type: Number,
         required: true,
     },
+    images: {
+        type: Array,
+        required: false,
+    }
 });
 
 const uploads = ref([]);
-const files = ref([]);
-const images = ref([]);
+const filesWithIds = ref([]);
+const images = ref(props.images || []);
 
 function handleDrop(e) {
     e.preventDefault();
@@ -25,45 +30,48 @@ function handleFileInput(e) {
     handleFiles(newFiles);
 }
 
-function handleFiles(newFiles) {
-    files.value = [...files.value, ...newFiles];
+async function handleFiles(newFiles) {
+    // assign IDs to image files
+    filesWithIds.value = newFiles.map(file => ({
+        fileData: file,
+        id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}-${file.size}`,
+        projectId: props.projectId,
+    }));
 
-    images.value = files.value.map(file => ({
-        src: URL.createObjectURL(file),
-        type: file.type,
-        name: file.name,
-        lastModified: file.lastModified,
-        // Possible too long string for database
-        id: file.name + file.lastModified,
-    }))
-    // uploadFiles(newFiles);
+    // Upload first, then update display
+    await uploadFiles(filesWithIds.value);
 }
 
-function removeImage(image) {
-    images.value = images.value.filter(img => img.id !== image.id)
+async function removeImage(image) {
+    try {
+        await axios.delete(`/api/images/${image.media_id}`)
 
-    files.value = files.value.filter(file =>
-        file.name !== image.name &&
-        file.lastModified !== image.lastModified
-    );
-    console.log(files.value);
+        images.value = images.value.filter(img => img.media_id !== image.media_id)
+        filesWithIds.value = filesWithIds.value.filter(file => file.media_id !== image.media_id)
+    } catch (error) {
+        console.error('Error deleting image:', error);
+    }
 }
 
 async function uploadFiles(filesToUpload) {
-    const formData = new FormData();
-    filesToUpload.forEach(file => {
-        formData.append('images[]', file);
-    });
-
     try {
-        const response = await axios.post(route('projects.images.upload', props.projectId), formData, {
+        const formData = new FormData();
+        filesToUpload.forEach(file => {
+            formData.append('files[]', file.fileData);
+            formData.append('id[]', file.id);
+            formData.append('project_id', file.projectId);
+        });
+
+        await axios.post('/api/images', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         });
-        uploads.value = [...uploads.value, ...response.data.images];
+
+        const response = await axios.get(`/api/images/${props.projectId}`);
+        images.value = response.data.images;
     } catch (error) {
-        console.error('Upload failed:', error);
+        console.error('Error uploading image:', error);
     }
 }
 </script>
@@ -77,13 +85,13 @@ async function uploadFiles(filesToUpload) {
             @click="uploads.click()"
             :class="[
             'w-full h-full border-zinc-600 flex items-center justify-center text-zinc-400 cursor-pointer',
-            files.length ? 'p-0.5 border-0 border-none grid grid-cols-2 gap-2 content-start overflow-y-auto' : 'border-2 p-2 border-dashed']"
+            images.length ? 'p-0.5 border-0 border-none grid grid-cols-2 gap-2 content-start overflow-y-auto' : 'border-2 p-2 border-dashed']"
         >
-            <div v-if="!files.length" class="text-center">
+            <div v-if="!images.length" class="text-center">
                 <p>Drag and drop images here or click to upload</p>
             </div>
             <div v-else v-for="image in images" class="relative">
-                <img :src="image.src" :alt="image.name" class="rounded-md">
+                <img :src="'/storage/' + image.path" :alt="image.name" :key="image.media_id" class="rounded-md">
                 <CloseIcon
                     class="absolute top-2 right-2 w-5 h-5 text-zinc-300 cursor-pointer bg-black bg-opacity-50 rounded-full p-1"
                     @click.stop="removeImage(image)"
@@ -92,7 +100,6 @@ async function uploadFiles(filesToUpload) {
         </div>
 
         <input
-            v-if="!uploads.length"
             type="file"
             ref="uploads"
             class="hidden"
@@ -101,8 +108,4 @@ async function uploadFiles(filesToUpload) {
             multiple
         >
     </div>
-    <button
-        class="mt-2.5 float-right text-white px-4 py-2 rounded-md shadow-md hover:bg-zinc-600 disabled:opacity-50 active:bg-zinc-500 transition ease-in-out duration-500 bg-zinc-700">
-        Upload images
-    </button>
 </template>

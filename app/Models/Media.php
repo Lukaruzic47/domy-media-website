@@ -2,13 +2,24 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Media
+class Media extends Model
 {
-    protected $fillable = ['path'];
+    use HasFactory;
+    protected $fillable = [
+        'media_id',
+        'project_id',
+        'path',
+        'file_name',
+        'mime_type',
+        'size',
+    ];
+
+    protected $primaryKey = 'media_id';
     public function projects()
     {
-        return $this->belongsToMany(Project::class, 'project_media', 'media_id', 'project_id');
+        return $this->hasMany(Project::class, 'project_id', 'media_id');
     }
 }

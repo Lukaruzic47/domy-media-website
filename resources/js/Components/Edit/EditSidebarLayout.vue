@@ -1,5 +1,5 @@
 <script setup>
-import {defineProps, toRefs} from "vue";
+import {defineProps} from "vue";
 import EditMainVideo from "@/Components/Edit/EditMainVideo.vue";
 import EditThumbnail from "@/Components/Edit/EditThumbnail.vue";
 import ProjectImagesBox from "@/Components/Edit/ProjectImagesBox.vue";
@@ -8,8 +8,9 @@ const props = defineProps({
     modelValue: {
         type: Object,
         required: true,
-    }
+    },
 })
+
 </script>
 <template>
     <div class="mt-5">
@@ -19,6 +20,6 @@ const props = defineProps({
         <EditMainVideo :main-video="props.modelValue.main_video" />
     </div>
     <div class="mt-5">
-        <ProjectImagesBox :project-id="modelValue.id"/>
+        <ProjectImagesBox :project-id="modelValue.id" :images="modelValue.images"/>
     </div>
 </template>

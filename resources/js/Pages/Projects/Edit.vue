@@ -8,7 +8,6 @@ import CloseIcon from "@/Components/Icons/CloseIcon.vue";
 import {Head, useForm} from "@inertiajs/vue3";
 import {ref, defineProps, watch, onMounted} from "vue";
 import emitter from "@/Components/Edit/EditMitter.js";
-import axios from "axios";
 
 // Primanje podataka iz props-a
 const props = defineProps({
@@ -35,6 +34,7 @@ const form = useForm({
     tiktok_url: project.value.tiktok_url,
     slug: project.value.slug,
     main_video: project.value.main_video || null,
+    images: project.value.images || [],
 });
 
 const sidebarTab = ref("Layout");
@@ -54,6 +54,7 @@ watch(() => project.value, (newProject) => {
     form.tiktok_url = newProject.tiktok_url;
     form.slug = newProject.slug;
     form.main_video = newProject.main_video;
+    form.images = newProject.images;
     saved.value = false;
 }, {deep: true});
 
@@ -84,6 +85,21 @@ emitter.on('update:thumbnail', (payload) => {
     }
     else{
         console.error('Invalid payload for thumbnail', payload);
+    }
+});
+
+emitter.on('update:images', (payload) => {
+    if ((payload instanceof Array || payload.length > 0 || payload instanceof Object) || payload instanceof File) {
+
+    }
+    else if (!payload) {
+        form.images = null;
+    }
+    else if (payload === 'delete'){
+        form.images = 'delete';
+    }
+    else{
+        console.error('Invalid payload for images', payload);
     }
 });
 
