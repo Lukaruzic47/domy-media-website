@@ -1,5 +1,5 @@
 <script setup>
-import {defineProps, ref, onMounted} from "vue";
+import {ref, onMounted} from "vue";
 import CloseIcon from "@/Components/Icons/CloseIcon.vue"
 import emitter from "@/Components/Edit/EditMitter.js";
 
@@ -80,7 +80,7 @@ function removeThumbnail() {
             <div v-else class="relative w-full h-full">
                 <img
                     :src="thumbnail.src"
-                    class="w-full h-full object-contain rounded-md drop-shadow-md"
+                    class="w-full h-full object-cover rounded-md drop-shadow-md"
                     @click.prevent
                 />
                 <CloseIcon

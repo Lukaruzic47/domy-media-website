@@ -6,8 +6,9 @@ import EditSidebarLayout from "@/Components/Edit/EditSidebarLayout.vue";
 import ToggleSwitch from "@/Components/ToggleSwitch.vue";
 import CloseIcon from "@/Components/Icons/CloseIcon.vue";
 import {Head, useForm} from "@inertiajs/vue3";
-import {ref, defineProps, watch, onMounted} from "vue";
+import {ref, watch} from "vue";
 import emitter from "@/Components/Edit/EditMitter.js";
+import ImageCanvas from "@/Components/Edit/ImageCanvas.vue";
 
 // Primanje podataka iz props-a
 const props = defineProps({
@@ -61,14 +62,11 @@ watch(() => project.value, (newProject) => {
 emitter.on('update:mainVideo', (payload) => {
     if (payload instanceof File) {
         form.main_video = payload;
-    }
-    else if (payload === null) {
+    } else if (payload === null) {
         form.main_video = null;
-    }
-    else if (payload === 'delete') {
+    } else if (payload === 'delete') {
         form.main_video = 'delete';
-    }
-    else {
+    } else {
         console.error('Invalid payload for main video', payload);
     }
 });
@@ -76,14 +74,11 @@ emitter.on('update:mainVideo', (payload) => {
 emitter.on('update:thumbnail', (payload) => {
     if (payload instanceof File) {
         form.thumbnail = payload;
-    }
-    else if (payload === null) {
+    } else if (payload === null) {
         form.thumbnail = null;
-    }
-    else if (payload === 'delete'){
+    } else if (payload === 'delete') {
         form.thumbnail = 'delete';
-    }
-    else{
+    } else {
         console.error('Invalid payload for thumbnail', payload);
     }
 });
@@ -91,14 +86,11 @@ emitter.on('update:thumbnail', (payload) => {
 emitter.on('update:images', (payload) => {
     if ((payload instanceof Array || payload.length > 0 || payload instanceof Object) || payload instanceof File) {
 
-    }
-    else if (!payload) {
+    } else if (!payload) {
         form.images = null;
-    }
-    else if (payload === 'delete'){
+    } else if (payload === 'delete') {
         form.images = 'delete';
-    }
-    else{
+    } else {
         console.error('Invalid payload for images', payload);
     }
 });
@@ -184,8 +176,9 @@ function toggleSidebar(option) {
             </template>
         </EditProjectTitle>
 
-        <div class="flex flex-row overflow-y-auto">
-            <div class="xl:w-80 py-4 px-5 bg-zinc-800 h-auto min-h-[calc(100vh-129px)]">
+        <!-- Edit sidebar -->
+        <div class="flex flex-row h-full bg-zinc-800">
+            <div class="xl:w-96 py-4 px-5 bg-zinc-800 h-full">
                 <ToggleSwitch
                     class="drop-shadow-md"
                     :options="['Layout', 'Info']"
@@ -205,11 +198,12 @@ function toggleSidebar(option) {
                     />
                 </keep-alive>
             </div>
-            <div class="bg-transparent flex-1">
-                <h1 class="text-2xl text-gray-200">Main image canvas</h1>
+            <div class="bg-stone-900 flex-1 h-auto">
+                <ImageCanvas/>
             </div>
         </div>
     </EditLayout>
+
     <!-- Project saved message -->
     <transition
         enter-active-class="transition-all duration-500 ease-out"
@@ -229,6 +223,10 @@ function toggleSidebar(option) {
     </transition>
 </template>
 <style scoped>
+html, body{
+    min-height: 100vh !important;
+}
+
 @keyframes pulseBg {
     0% {
         background-color: #71717a; /* bg-zinc-600 */

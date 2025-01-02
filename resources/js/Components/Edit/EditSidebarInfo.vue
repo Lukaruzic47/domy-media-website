@@ -1,5 +1,5 @@
 <script setup>
-import {defineProps, toRefs, ref, nextTick, watch, onMounted} from "vue";
+import {toRefs, ref, nextTick, watch, onMounted} from "vue";
 import EditTextIcon from "@/Components/Icons/EditTextIcon.vue";
 
 const props = defineProps({
@@ -126,7 +126,7 @@ function resetInputs() {
 
 <template>
 
-    <div class="w-full min-h-1 mt-5">
+    <div class="w-full h-full mt-5">
         <div>
             <div v-if="!isEditingAuthor" class="flex items-center cursor-pointer w-fit font-medium" @click="editAuthor">
                 <h4 class="text-base text-gray-200">

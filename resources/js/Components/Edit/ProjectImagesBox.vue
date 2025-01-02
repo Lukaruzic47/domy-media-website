@@ -2,6 +2,7 @@
 import {ref, defineProps} from 'vue';
 import CloseIcon from "@/Components/Icons/CloseIcon.vue";
 import emitter from "@/Components/Edit/EditMitter.js";
+import {VueDraggable} from 'vue-draggable-plus'
 import axios from "axios";
 
 const props = defineProps({
@@ -20,6 +21,7 @@ const filesWithIds = ref([]);
 const images = ref(props.images || []);
 
 function handleDrop(e) {
+    if(e.dataTransfer.files.length === 0) return;
     e.preventDefault();
     const newFiles = Array.from(e.dataTransfer.files);
     handleFiles(newFiles);
@@ -34,7 +36,6 @@ async function handleFiles(newFiles) {
     // assign IDs to image files
     filesWithIds.value = newFiles.map(file => ({
         fileData: file,
-        id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}-${file.size}`,
         projectId: props.projectId,
     }));
 
@@ -58,7 +59,6 @@ async function uploadFiles(filesToUpload) {
         const formData = new FormData();
         filesToUpload.forEach(file => {
             formData.append('files[]', file.fileData);
-            formData.append('id[]', file.id);
             formData.append('project_id', file.projectId);
         });
 
@@ -68,34 +68,48 @@ async function uploadFiles(filesToUpload) {
             }
         });
 
-        const response = await axios.get(`/api/images/${props.projectId}`);
-        images.value = response.data.images;
+        const response = await axios.get(`/api/images/${props.projectId}`, {
+            params: { amount: filesToUpload.length }
+        });
+        images.value = [...images.value, ...response.data.images];
+
     } catch (error) {
         console.error('Error uploading image:', error);
     }
 }
+
 </script>
 
 <template>
     <label class="text-base text-gray-200">Project images</label>
-    <div :class="['mt-0.5 bg-zinc-900 w-full h-[calc(516px)] rounded-lg',  'p-4']">
+    <div :class="['mt-0.5 bg-zinc-900 w-full h-[516px] rounded-lg p-4']">
         <div
             @dragover.prevent
             @drop.prevent="handleDrop"
+            @dragend.prevent
             @click="uploads.click()"
             :class="[
-            'w-full h-full border-zinc-600 flex items-center justify-center text-zinc-400 cursor-pointer',
-            images.length ? 'p-0.5 border-0 border-none grid grid-cols-2 gap-2 content-start overflow-y-auto' : 'border-2 p-2 border-dashed']"
+    'w-full h-full border-zinc-600 flex text-zinc-400 cursor-pointer overflow-y-auto',
+    images.length ? 'p-0 border-0 border-none' : 'border-2 p-2 border-dashed justify-center']"
         >
-            <div v-if="!images.length" class="text-center">
+            <div v-if="!images.length" class="text-center block mx-auto my-auto">
                 <p>Drag and drop images here or click to upload</p>
             </div>
-            <div v-else v-for="image in images" class="relative">
-                <img :src="'/storage/' + image.path" :alt="image.name" :key="image.media_id" class="rounded-md">
-                <CloseIcon
-                    class="absolute top-2 right-2 w-5 h-5 text-zinc-300 cursor-pointer bg-black bg-opacity-50 rounded-full p-1"
-                    @click.stop="removeImage(image)"
-                />
+            <div v-else class="w-full h-full overflow-y-auto">
+                <VueDraggable
+                    v-model="images"
+                    :group="{ name: 'items', pull: true, put: true }"
+                    animation="300"
+                    class="columns-2 gap-1 w-full"
+                >
+                    <div v-for="image in images" class="relative mb-1 break-inside-avoid">
+                        <img :src="'/storage/' + image.path" :alt="image.name" :key="image.media_id" class="rounded-md w-full">
+                        <CloseIcon
+                            class="absolute top-2 right-2 w-5 h-5 text-zinc-300 cursor-pointer bg-black bg-opacity-50 rounded-full p-1"
+                            @click.stop="removeImage(image)"
+                        />
+                    </div>
+                </VueDraggable>
             </div>
         </div>
 

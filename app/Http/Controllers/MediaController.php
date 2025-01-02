@@ -5,52 +5,43 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Media;
 use App\Models\Project;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
 {
-    public function index($project_id)
+    public function index($project_id, Request $request)
     {
-//        $project = Project::findOrFail($project_id);
-        $media = Media::where('project_id', $project_id)->get();
-
+        $amount = $request->amount;
+        $media = Media::where('project_id', $project_id)->orderBy('created_at', 'desc')->take($amount)->get();
         return response()->json([
-            'images' => $media
+            'images' => $media,
         ]);
     }
 
     public function upload(Request $request)
     {
-
         $validated = $request->validate([
-            'files.*' => 'required|file|mimes:jpg,jpeg,png,webp|max:4096', // Validacija za svaku datoteku
-            'id.*' => 'required|string|max:255',
-            'project_id.*' => 'required|exists:projects,id|int'
+            'files.*' => 'required|file|mimes:jpg,jpeg,png,webp|max:4096',
+            'project_id' => 'required|exists:projects,id|integer'
         ]);
 
-        // Provjera da li je korisnik odabrao projekt za upload
-        $projectId = $request->input('project_id');
-        $project = Project::findOrFail($projectId);
+        $projectId = $validated['project_id'];
 
-        // Upload datoteka
-        foreach ($request->file('files') as $file) {
+        foreach ($validated['files'] as $index => $file) {
             $projectPath = 'images/project-' . $projectId . '-media';
             $path = $file->store($projectPath, 'public');
-            $fileName = $file->getClientOriginalName();
-            $mimeType = $file->getClientMimeType();
-            $size = $file->getSize();
 
             Media::create([
                 'project_id' => $projectId,
                 'path' => $path,
-                'file_name' => $fileName,
-                'mime_type' => $mimeType,
-                'size' => $size,
+                'file_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getClientMimeType(),
+                'size' => $file->getSize(),
             ]);
         }
 
-        return back()->with('success', 'Media uploaded successfully!');
+        $media = Media::where('project_id', $projectId)->get();
+        return response()->json($media);
     }
 
     public function destroy($id)

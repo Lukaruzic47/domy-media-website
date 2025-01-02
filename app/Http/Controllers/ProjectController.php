@@ -43,11 +43,16 @@ class ProjectController extends Controller
             'category' => 'required|string|max:255',
         ]);
 
-        $slug = Str::slug($validated['title']);
-        $validated['slug'] = $slug;
+        $validated['slug'] = Str::slug($validated['title']);
+        $counter = 0;
+
+        while (Project::slugExists($validated['slug'])) {
+            $validated['slug'] = $validated['slug'] . '-' . ++$counter;
+        }
+
         Project::create($validated);
 
-        return redirect()->route('projects.edit', ['slug' => $slug]);
+        return redirect()->route('projects.edit', ['slug' => $validated['slug']]);
     }
 
     /**
@@ -63,7 +68,6 @@ class ProjectController extends Controller
      */
     public function edit($slug)
     {
-
         $projectData = Project::where('slug', $slug)->firstOrFail();
         $projectImages = Media::where('project_id', $projectData->id)->get();
 
@@ -90,9 +94,16 @@ class ProjectController extends Controller
             'instagram_url' => 'nullable|string|max:255',
             'tiktok_url' => 'nullable|string|max:255',
             'main_video' => $request->input('main_video') === 'delete' ? 'string' :
-                ($request->hasFile('main_video') ? 'file|mimes:mp4,mov,avi,wmv|max:20480' : 'nullable'),]);
+                ($request->hasFile('main_video') ? 'file|mimes:mp4,mov,avi,wmv|max:20480' : 'nullable'),
+        ]);
 
         $validated['slug'] = Str::slug($validated['title']);
+        $counter = 0;
+
+        while (Project::slugExists($validated['slug'])) {
+            $validated['slug'] = $validated['slug'] . '-' . ++$counter;
+        }
+
         try {
             if ($request->hasFile('main_video')) {
                 if ($project->main_video) {
@@ -112,7 +123,6 @@ class ProjectController extends Controller
                 $projectPath = 'thumbnail/project-' . $project->id;
                 $path = $request->file('thumbnail')->store($projectPath, 'public');
                 $validated['thumbnail'] = $path;
-
             }
             if ($request->input('thumbnail') === 'delete' && $project->thumbnail) {
                 Storage::disk('public')->delete($project->thumbnail);
@@ -123,6 +133,7 @@ class ProjectController extends Controller
                 $validated['main_video'] = null;
             }
 
+//            dd($validated);
             $project->update($validated);
 
             return redirect()

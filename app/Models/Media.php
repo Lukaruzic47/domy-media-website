@@ -9,7 +9,7 @@ class Media extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'media_id',
+        'media_id' => 'string',
         'project_id',
         'path',
         'file_name',

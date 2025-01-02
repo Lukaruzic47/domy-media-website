@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import CloseIcon from "@/Components/Icons/CloseIcon.vue"
 import emitter from "@/Components/Edit/EditMitter.js";
 

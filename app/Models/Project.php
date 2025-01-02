@@ -34,4 +34,14 @@ class Project extends Model
     {
         return 'slug';
     }
+    public static function slugExists($slug): bool
+    {
+        if(Project::where('slug', $slug)->exists()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
 }

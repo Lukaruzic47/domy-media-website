@@ -1,5 +1,4 @@
 <script setup>
-import {defineProps} from "vue";
 import EditMainVideo from "@/Components/Edit/EditMainVideo.vue";
 import EditThumbnail from "@/Components/Edit/EditThumbnail.vue";
 import ProjectImagesBox from "@/Components/Edit/ProjectImagesBox.vue";

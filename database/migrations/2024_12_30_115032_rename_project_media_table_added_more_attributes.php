@@ -9,7 +9,6 @@ return new class extends Migration {
      * Run the migrations.
      */
     public function up(): void {
-        Schema::rename('project_media', 'media');
         Schema::table('media', function (Blueprint $table) {
             $table->string('file_name')->nullable()->after('path');
             $table->string('mime_type')->nullable()->after('file_name');
