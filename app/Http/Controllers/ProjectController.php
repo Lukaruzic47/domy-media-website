@@ -95,6 +95,7 @@ class ProjectController extends Controller
             'tiktok_url' => 'nullable|string|max:255',
             'main_video' => $request->input('main_video') === 'delete' ? 'string' :
                 ($request->hasFile('main_video') ? 'file|mimes:mp4,mov,avi,wmv|max:20480' : 'nullable'),
+            'positions' => 'nullable|string|json',
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);

@@ -16,7 +16,7 @@ class Project extends Model
         'date',
         'thumbnail',
         'published',
-        'metadata',
+        'positions',
         'category',
         'main_video',
         'slug',

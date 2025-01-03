@@ -36,6 +36,7 @@ const form = useForm({
     slug: project.value.slug,
     main_video: project.value.main_video || null,
     images: project.value.images || [],
+    positions: project.value.positions || [],
 });
 
 const sidebarTab = ref("Layout");
@@ -56,6 +57,7 @@ watch(() => project.value, (newProject) => {
     form.slug = newProject.slug;
     form.main_video = newProject.main_video;
     form.images = newProject.images;
+    form.positions = newProject.positions;
     saved.value = false;
 }, {deep: true});
 
@@ -95,6 +97,14 @@ emitter.on('update:images', (payload) => {
     }
 });
 
+emitter.on('update:image_positions', (payload) => {
+    if (typeof payload == 'string') {
+        form.positions = payload;
+    } else {
+        console.error('Invalid payload for image positions', payload);
+    }
+});
+
 function saveProjectPopup() {
     projectSaved.value = true;
 
@@ -104,6 +114,8 @@ function saveProjectPopup() {
 }
 
 function saveProject() {
+    emitter.emit('get:positions');
+
     if (form.main_video || form.thumbnail) {
         form.post(route('projects.update', project.value.slug), {
             _method: 'PUT',
@@ -199,7 +211,7 @@ function toggleSidebar(option) {
                 </keep-alive>
             </div>
             <div class="bg-stone-900 flex-1 h-auto">
-                <ImageCanvas/>
+                <ImageCanvas :positions="project.positions"/>
             </div>
         </div>
     </EditLayout>

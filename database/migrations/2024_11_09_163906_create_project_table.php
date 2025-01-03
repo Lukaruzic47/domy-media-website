@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->date('date')->nullable();
             $table->boolean('published')->default(false);
-            $table->json('metadata')->nullable();
+            $table->json('positions')->nullable();
             $table->string('category')->nullable(false);
             $table->string('slug')->nullable(false);
             $table->string('youtube_url')->nullable();
