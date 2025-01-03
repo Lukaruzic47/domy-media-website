@@ -14,7 +14,8 @@ const props = defineProps({
 const colOne = ref([]);
 const colTwo = ref([]);
 const colThree = ref([]);
-const positions = ref(JSON.parse(props.positions) || []);
+const positions = ref(JSON.parse(props.positions || '{}'));
+
 const updatePositions = () => {
     positions.value = {
         colOne: [],
@@ -48,6 +49,7 @@ const updatePositions = () => {
 }
 
 emitter.on('update:load_canvas_images', (allImages) => {
+    if(props.positions) {
     const sortByIndex = (columnName) => {
         return allImages
             .filter(img => positions.value[columnName].some(pos => pos.id === img.media_id))
@@ -62,7 +64,19 @@ emitter.on('update:load_canvas_images', (allImages) => {
     colTwo.value = sortByIndex('colTwo');
     colThree.value = sortByIndex('colThree');
 
+    const assignedIds = [...positions.value.colOne, ...positions.value.colTwo, ...positions.value.colThree]
+        .map(pos => pos.id);
+
+    const unassignedImages = allImages.filter(img =>
+        !assignedIds.includes(img.media_id)
+    );
+
+    emitter.emit('update:unassigned_images', unassignedImages);
     updatePositions();
+
+    } else {
+        emitter.emit('update:unassigned_images', allImages);
+    }
 });
 
 emitter.on('get:positions', () => {

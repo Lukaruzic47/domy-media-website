@@ -55,6 +55,8 @@ async function removeImage(image) {
         images.value = images.value.filter(img => img.media_id !== image.media_id)
         filesWithIds.value = filesWithIds.value.filter(file => file.media_id !== image.media_id)
         imageContainer.value = imageContainer.value.filter(img => img.media_id !== image.media_id)
+
+        emitter.emit('delete:image_from_canvas', image.media_id);
     } catch (error) {
         console.error('Error deleting image:', error);
     }
@@ -87,14 +89,17 @@ async function uploadFiles(filesToUpload) {
 
 emitter.on('update:image_to_container', (image) => {
     imageContainer.value.push(image);
-    updatePositions();
+});
+
+emitter.on('update:unassigned_images', (images) => {
+    imageContainer.value = [...images];
 });
 
 </script>
 
 <template>
     <label class="text-base text-gray-200">Project images</label>
-    <div :class="['mt-0.5 bg-zinc-900 w-full h-[516px] rounded-lg p-4']">
+    <div :class="['mt-0.5 bg-zinc-900 w-full h-[720px] rounded-lg p-4']">
         <div
             @dragover.prevent
             @drop.prevent="handleDrop"
@@ -119,7 +124,7 @@ emitter.on('update:image_to_container', (image) => {
                     <div v-for="image in imageContainer" class="relative mb-1 break-inside-avoid">
                         <img :src="'/storage/' + image.path" :alt="image.name" :key="image.media_id" class="rounded-md w-full">
                         <CloseIcon
-                            class="absolute top-2 right-2 w-5 h-5 text-zinc-300 cursor-pointer bg-black bg-opacity-50 rounded-full p-1"
+                            :class="['absolute top-2 right-2 w-5 h-5 text-zinc-300 cursor-pointer bg-black bg-opacity-50 rounded-full p-1']"
                             @click.stop="removeImage(image)"
                         />
                     </div>
